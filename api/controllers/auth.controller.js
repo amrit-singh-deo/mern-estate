@@ -4,6 +4,7 @@ import errorHandler from "../utils/error.js";
 import jwt from "jsonwebtoken";
 
 export const signup = async (req, res, next) => {
+  // console.log("hello");
   const { username, email, password } = req.body;
   const hashedPassword = bcryptjs.hashSync(password, 10);
   const newUser = new User({ username, email, password: hashedPassword });
@@ -19,6 +20,7 @@ export const signin = async (req, res, next) => {
   const { email, password } = req.body;
   try {
     const validUser = await User.findOne({ email });
+    // console.log("hello");
     if (!validUser) {
       return next(errorHandler(404, "User not found!"));
     }
@@ -26,7 +28,7 @@ export const signin = async (req, res, next) => {
     if (!validPassword) {
       return next(errorHandler(401, "Wrong credentials!"));
     }
-    const token = jwt.sign({ id: validPassword._id }, process.env.JWT_SECRET);
+    const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET);
     const { password: pass, ...rest } = validUser._doc;
     res
       .cookie("access_token", token, {
@@ -41,6 +43,7 @@ export const signin = async (req, res, next) => {
 
 export const google = async (req, res, next) => {
   try {
+    // console.log("hello");
     const user = await User.findOne({ email: req.body.email });
     if (user) {
       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
