@@ -10,14 +10,16 @@ import {
 } from "../redux/user/userSlice";
 
 const SignIn = () => {
-  const { loading, error } = useSelector((state) => state.user);
+  const { loading, error } = useSelector((state) => state.user.userReducer);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({});
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
-  // console.log(formData);
+  const [err, setErr] = useState(false);
+  // console.log(err);
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -29,13 +31,15 @@ const SignIn = () => {
         },
         body: JSON.stringify(formData),
       });
-      // console.log(res);
       const data = await res.json();
       if (data.success === false) {
+        setErr(true);
         dispatch(signInFailure(data.message));
+        // console.log(data.message);
         return;
       }
       dispatch(signInSuccess(data));
+      // console.log(err);
       navigate("/");
     } catch (error) {
       dispatch(signInFailure(error.message));
@@ -76,7 +80,7 @@ const SignIn = () => {
           <span className="text-blue-700">Sign Up</span>
         </Link>
       </div>
-      {error && <p className="text-red-500 mt-5">{error}</p>}
+      {error && err ? <p className="text-red-500 mt-5">{error}</p> : ""}
     </div>
   );
 };

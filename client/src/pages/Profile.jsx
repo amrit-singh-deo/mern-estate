@@ -19,6 +19,7 @@ import {
   signOutSuccess,
 } from "../redux/user/userSlice";
 import { useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 
 const Profile = () => {
   const { currentUser, loading, error } = useSelector(
@@ -70,6 +71,7 @@ const Profile = () => {
     e.preventDefault();
     try {
       dispatch(updateUserStart());
+      // console.log(currentUser._id);
       const res = await fetch(`/api/user/update/${currentUser._id}`, {
         method: "POST",
         headers: {
@@ -80,6 +82,7 @@ const Profile = () => {
       const data = await res.json();
       if (data.success === false) {
         dispatch(updateUserFailure(data.message));
+        // console.log(data);
         return;
       }
 
@@ -92,6 +95,7 @@ const Profile = () => {
 
   const handleDeleteUser = async () => {
     try {
+      // console.log(currentUser._id);
       dispatch(deleteUserStart());
       const res = await fetch(`/api/user/delete/${currentUser._id}`, {
         method: "DELETE",
@@ -125,7 +129,7 @@ const Profile = () => {
 
   return (
     <div className="p-3 max-w-lg mx-auto">
-      <h1 className="text-3xl font-semibold text-center my-2">Profile</h1>
+      <h1 className="text-3xl font-semibold text-center my-1">Profile</h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
           onChange={(e) => setFile(e.target.files[0])}
@@ -182,6 +186,12 @@ const Profile = () => {
         >
           {loading ? "loading..." : "Update"}
         </button>
+        <Link
+          to={"/create-listing"}
+          className="bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95"
+        >
+          Create Listing
+        </Link>
       </form>
       <div className="flex justify-between mt-5">
         <span
